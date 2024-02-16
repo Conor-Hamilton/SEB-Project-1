@@ -1,3 +1,73 @@
+:root {
+  --grid-cell-size: 20px;
+}
+
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body {
+  align-items: center;
+  background: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  font-family: "Matrix", sans-serif;
+  height: 100vh;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+
+.tetris-container {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.main-container {
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 5px;
+  border: 2px solid rgba(0, 255, 0, 0.5);
+}
+
+.tetris-grid,
+.hold-piece,
+.next-piece {
+  margin: 10px;
+}
+
+.left-panel,
+.right-panel {
+  border: 2px solid rgba(0, 255, 0, 0.5);
+  margin: 10px;
+}
+
+.grid-4x4 {
+  border: 1px solid #000;
+  display: grid;
+  grid-template-columns: repeat(4, 25px);
+  grid-template-rows: repeat(4, 25px);
+  margin: 10px 0;
+}
+
+.tetris-grid {
+  border: 1px solid #000;
+  display: grid;
+  grid-template-columns: repeat(10, 25px);
+  grid-template-rows: repeat(20, 25px);
+}
+
+.game-info,
+.stats {
+  text-align: center;
+}
+
+.game-controls button {
+  margin-top: 10px;
+}
+
+button {
+  font-family: "Matrix", sans-serif;
 }
