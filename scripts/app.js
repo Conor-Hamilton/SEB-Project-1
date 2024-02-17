@@ -2,8 +2,18 @@
 //  This is where I am going to create the canvas for the animated background I want.
 //
 // Creating the shapes: I O T S Z J L
+const playGrid = document.querySelector("#play-grid");
+const playWidth = 10;
+const playHeight = 20;
+const playCellCount = playWidth * playHeight;
+const playCells = [];
 
-const width = 10;
+const nextGrid = document.querySelectorAll(".grid-4x4");
+const nextWidth = 4;
+const nextHeight = 4;
+const nextCellCount = nextWidth * nextHeight;
+const nextCells = [];
+
 
 // define the shapes
 // function to draw the shapes randomly
