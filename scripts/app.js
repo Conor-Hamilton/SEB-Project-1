@@ -1,8 +1,8 @@
 // The setup:
 //  This is where I am going to create the canvas for the animated background I want.
-//
-// Creating the shapes: I O T S Z J L
-const playGrid = document.querySelector("#play-grid");
+// Making a grid for main game and next piece
+
+const playGrid = document.querySelector(".play-grid");
 const playWidth = 10;
 const playHeight = 20;
 const playCellCount = playWidth * playHeight;
@@ -15,6 +15,8 @@ const nextCellCount = nextWidth * nextHeight;
 const nextCells = [];
 
 
+
+// Creating the shapes: I O T S Z J L
 // define the shapes
 // function to draw the shapes randomly
 //
@@ -37,10 +39,38 @@ const nextCells = [];
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
+
+
+//////////////// CANVAS - MATRIX THEME /////////////////
+
+const canvas = document.getElementById("tetris-matrix");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const tetrisShapes = ["I", "O", "T", "S", "Z", "J", "L"];
+const fontSize = 16;
+const columns = canvas.width / fontSize;
+const drops = Array(Math.floor(columns)).fill(1);
+
+function draw() {
+  ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "#0F0";
+  ctx.font = fontSize + "px arial";
+
+  for (let i = 0; i < drops.length; i++) {
+    const text = tetrisShapes[Math.floor(Math.random() * tetrisShapes.length)];
+    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+      drops[i] = 0;
+    }
+    drops[i]++;
+  }
+}
+
+setInterval(draw, 85);
+
