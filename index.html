@@ -10,14 +10,14 @@
   </head>
   <body>
     <header><h1>TETRIS RELOADED</h1></header>
-    <!-- <canvas id="tetris-matrix"></canvas> -->
+    <canvas id="tetris-matrix"></canvas>
     <main>
       <!-- Left Panel -->
       <section class="panel" id="left">
         <div class="buttons-container">
           <div class="left-panel">
             <div class="hold-piece">
-              <p>Hold Piece:</p>
+              <p>Hold:</p>
               <div class="grid-4x4" id="hold-piece"></div>
             </div>
             <div class="game-info">
@@ -47,14 +47,17 @@
       <section class="panel" id="right">
         <div class="right-panel">
           <div class="next-grid">
-            <p>Next Piece:</p>
+            <p>Next:</p>
             <div class="grid-4x4" id="next-piece"></div>
           </div>
 
           <div class="stats">
-            <p>Time: <span id="time">00:00</span></p>
-            <p>Highscore: <span id="highscore">0</span></p>
-            <p>Total Score: <span id="total-score">0</span></p>
+            <div class="info-container">
+
+                <p>Time: <span id="time">00:00</span></p>
+                <p>Highscore: <span id="highscore">0</span></p>
+                <p>Total Score: <span id="total-score">0</span></p>
+            </div>
           </div>
         </div>
       </section>
