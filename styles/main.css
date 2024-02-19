@@ -84,3 +84,18 @@ main {
 #left {
   padding: 20px;
 }
+
+.grid div,
+.grid-4x4 div {
+  width: 25px;
+  height: 25px;
+  border: 1px solid #555;
+  background-color: #333;
+}
+
+.grid-4x4 {
+  display: flex;
+  flex-wrap: wrap;
+  width: 104px;
+  margin: auto;
+}

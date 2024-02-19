@@ -1,19 +1,31 @@
 // The setup:
 // Making a grid for main game and next piece
 
-const CurrentPlayGrid = document.querySelector(".play-grid");
+// Current play section
+const CurrentPlayGrid = document.querySelector(".grid");
 const CurrentPlayWidth = 10;
 const CurrentPlayHeight = 20;
-const CurrentPlayCellCount = playWidth * playHeight;
+const CurrentPlayCellCount = CurrentPlayWidth * CurrentPlayHeight; 
 const CurrentPlayCells = [];
 
-const nextGrid = document.querySelectorAll(".grid-4x4");
+// Next piece section
+const nextGrid = document.querySelector("#next-piece");
 const nextWidth = 4;
 const nextHeight = 4;
 const nextCellCount = nextWidth * nextHeight;
 const nextCells = [];
 
-function createGrid() {}
+function createGrid(cellCount, cells, gridContainer) {
+  for (let i = 0; i < cellCount; i++) {
+    const cell = document.createElement("div");
+    cell.dataset.index = i;
+    cells.push(cell);
+    gridContainer.appendChild(cell);
+  }
+}
+
+createGrid(CurrentPlayCellCount, CurrentPlayCells, CurrentPlayGrid);
+createGrid(nextCellCount, nextCells, nextGrid);
 
 // Create grids
 // Creating the shapes: I O T S Z J L
