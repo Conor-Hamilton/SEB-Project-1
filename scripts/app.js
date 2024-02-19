@@ -1,11 +1,11 @@
 // The setup:
 // Making a grid for main game and next piece
 
-const playGrid = document.querySelector(".play-grid");
-const playWidth = 10;
-const playHeight = 20;
-const playCellCount = playWidth * playHeight;
-const playCells = [];
+const CurrentPlayGrid = document.querySelector(".play-grid");
+const CurrentPlayWidth = 10;
+const CurrentPlayHeight = 20;
+const CurrentPlayCellCount = playWidth * playHeight;
+const CurrentPlayCells = [];
 
 const nextGrid = document.querySelectorAll(".grid-4x4");
 const nextWidth = 4;
@@ -13,6 +13,9 @@ const nextHeight = 4;
 const nextCellCount = nextWidth * nextHeight;
 const nextCells = [];
 
+function createGrid() {}
+
+// Create grids
 // Creating the shapes: I O T S Z J L
 // define the shapes
 // function to draw the shapes randomly
