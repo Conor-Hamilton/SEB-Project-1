@@ -4,11 +4,11 @@
 }
 
 body {
-  color: white;
   align-items: center;
   background-position: bottom;
   background-size: cover;
   background: black;
+  color: white;
   display: flex;
   flex-direction: column;
   margin: 0px;
@@ -42,16 +42,16 @@ main {
 }
 
 .panel {
-    border: 2px solid rgba(0, 255, 0, 0.5);
-    margin: 10px;
-    background-color: rgba(0, 0, 0, 0.8);
-    border-radius: 5px
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 5px;
+  border: 2px solid rgba(0, 255, 0, 0.5);
+  margin: 10px;
 }
 
 .grid-wrapper {
+  align-items: center;
   display: flex;
   justify-content: center;
-  align-items: center;
 }
 .grid {
   align-items: center;
@@ -59,21 +59,28 @@ main {
   display: flex;
   flex-wrap: wrap;
   height: 100%;
-  justify-content: center;
   height: calc(25px * 20);
+  justify-content: center;
   width: calc(25px * 10);
 }
 
 canvas {
   display: block;
-  position: absolute;
-  z-index: 1;
-  width: 100%;
   height: 100%;
+  position: absolute;
+  width: 100%;
+  z-index: 1;
 }
 
-.main, .panel, header, main {
-    position: relative;
-    z-index: 2;
+.main,
+.panel,
+header,
+main {
+  position: relative;
+  z-index: 2;
 }
 
+#right,
+#left {
+  padding: 20px;
+}
