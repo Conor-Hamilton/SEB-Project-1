@@ -1,11 +1,10 @@
-// The setup:
-// Making a grid for main game and next piece
+// Making a grid for main game, next piece and hold piece (hold piece tbc if im doing this)
 
 // Current play section
 const CurrentPlayGrid = document.querySelector(".grid");
 const CurrentPlayWidth = 10;
 const CurrentPlayHeight = 20;
-const CurrentPlayCellCount = CurrentPlayWidth * CurrentPlayHeight; 
+const CurrentPlayCellCount = CurrentPlayWidth * CurrentPlayHeight;
 const CurrentPlayCells = [];
 
 // Next piece section
@@ -22,7 +21,6 @@ const holdHeight = 4;
 const holdCellCount = nextWidth * nextHeight;
 const holdCells = [];
 
-
 function createGrid(cellCount, cells, gridContainer) {
   for (let i = 0; i < cellCount; i++) {
     const cell = document.createElement("div");
@@ -36,9 +34,45 @@ createGrid(CurrentPlayCellCount, CurrentPlayCells, CurrentPlayGrid);
 createGrid(nextCellCount, nextCells, nextGrid);
 createGrid(holdCellCount, holdCells, holdGrid);
 
-// Create grids
 // Creating the shapes: I O T S Z J L
 // define the shapes
+
+class Shapes {
+  constructor(shape) {
+    this.shape = shape;
+  }
+}
+
+const shapes = {
+  I: [[1, 1, 1, 1]],
+  O: [
+    [1, 1],
+    [1, 1],
+  ],
+  T: [
+    [0, 1, 0],
+    [1, 1, 1],
+  ],
+  S: [
+    [0, 1, 1],
+    [1, 1, 0],
+  ],
+  Z: [
+    [1, 1, 0],
+    [0, 1, 1],
+  ],
+  J: [
+    [0, 1, 0],
+    [0, 1, 0],
+    [1, 1, 0],
+  ],
+  L: [
+    [0, 1, 0],
+    [0, 1, 0],
+    [0, 1, 1],
+  ],
+};
+
 // function to draw the shapes randomly
 //
 // core game mechanics / logic:

@@ -9,25 +9,26 @@
     <script defer src="./scripts/app.js"></script>
   </head>
   <body>
-      <header><h1>TETRIS RELOADED</h1></header>
-      <canvas id="tetris-matrix"></canvas>
-      <main>
-
+    <header><h1>TETRIS RELOADED</h1></header>
+    <!-- <canvas id="tetris-matrix"></canvas> -->
+    <main>
       <!-- Left Panel -->
       <section class="panel" id="left">
         <div class="buttons-container">
           <div class="left-panel">
             <div class="hold-piece">
-              <p>Hold Piece</p>
-              <div class="grid-4x4" id="hold-piece">xxxxxxxxxxx</div>
+              <p>Hold Piece:</p>
+              <div class="grid-4x4" id="hold-piece"></div>
             </div>
             <div class="game-info">
-              <p>Speed Lvl: <span id="speed-level">1</span></p>
-              <p>Lines cleared: <span id="lines">0</span></p>
-            </div>
-            <div class="game-controls">
-              <button id="pause-button">Pause</button>
-              <button id="reset-button">Reset</button>
+              <div class="info-container">
+                <p>Speed Lvl: <span id="speed-level">1</span></p>
+                <p>Lines cleared: <span id="lines">0</span></p>
+                <div class="game-controls">
+                  <button id="pause-button">Pause</button>
+                  <button id="reset-button">Reset</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -37,8 +38,7 @@
       <!-- Main Panel -->
       <section class="panel" id="grid">
         <div class="grid-wrapper">
-            <div class="grid"></div>
-        </div>
+          <div class="grid"></div>
         </div>
       </section>
       <!-- --------------------------------------------------------- -->
@@ -47,8 +47,8 @@
       <section class="panel" id="right">
         <div class="right-panel">
           <div class="next-grid">
-            <p>Next Piece</p>
-            <div class="grid-4x4" id="next-piece">xxxxxxxxxxx</div>
+            <p>Next Piece:</p>
+            <div class="grid-4x4" id="next-piece"></div>
           </div>
 
           <div class="stats">
