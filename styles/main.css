@@ -86,8 +86,8 @@ main {
 .grid div,
 .grid-4x4 div {
   background-color: #333;
-  opacity: 0.7;
-  border: 1px solid rgba(0, 255, 0, 0.2);
+  opacity: 0.8;
+  border: 1px solid rgba(0, 255, 0, 0.4);
   height: 25px;
   width: 25px;
 }
@@ -100,10 +100,10 @@ main {
 }
 
 .stats {
-  margin-top: 180px;
+  margin-top: 240px;
 }
 .game-info {
-  margin-top: 180px;
+  margin-top: 250px;
 }
 
 .info-container {
@@ -121,4 +121,10 @@ main {
 
 p {
   background-color: rgba(0, 0, 0, 0.8);
+}
+
+.grid div.tetrimino {
+  background-color: #0f0;
+  border-color: #0f0;
+  box-shadow: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 30px #0f0;
 }

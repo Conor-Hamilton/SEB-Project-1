@@ -35,13 +35,14 @@ createGrid(nextCellCount, nextCells, nextGrid);
 createGrid(holdCellCount, holdCells, holdGrid);
 
 // Creating the shapes: I O T S Z J L
-// define the shapes
-
 class Shapes {
   constructor(shape) {
     this.shape = shape;
+    this.position = { x: 0, y: 4 };
   }
 }
+
+// Creating shapes 'factory'
 
 const shapes = {
   I: [[1, 1, 1, 1]],
@@ -72,6 +73,41 @@ const shapes = {
     [0, 1, 1],
   ],
 };
+
+function createTetrimino(type) {
+  return new Shapes(shapes[type]);
+}
+
+// Creating shapes functions
+const i = createTetrimino("I");
+const o = createTetrimino("O");
+const t = createTetrimino("T");
+const s = createTetrimino("S");
+const z = createTetrimino("Z");
+const j = createTetrimino("J");
+const l = createTetrimino("L");
+
+function addShape(shapeType) {
+  const tetrimino = createTetrimino(shapeType);
+  const shape = tetrimino.shape;
+  let positionX = 4;
+  let positionY = 0;
+  let position = positionY * CurrentPlayWidth + positionX;
+
+  shape.forEach((row, rowIndex) => {
+    row.forEach((value, colIndex) => {
+      if (value === 1) {
+        let cellIndex = position + rowIndex * CurrentPlayWidth + colIndex;
+        if (cellIndex < CurrentPlayCells.length) {
+          CurrentPlayCells[cellIndex].classList.add("tetrimino");
+        }
+      }
+    });
+  });
+}
+
+
+addShape("J");
 
 // function to draw the shapes randomly
 //
