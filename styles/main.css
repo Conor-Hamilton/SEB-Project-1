@@ -89,7 +89,7 @@ main {
 .grid-4x4 div {
   width: 25px;
   height: 25px;
-  border: 1px solid #555;
+  border: 1px solid rgba(0, 255, 0, 0.2);
   background-color: #333;
 }
 
@@ -98,4 +98,11 @@ main {
   flex-wrap: wrap;
   width: 104px;
   margin: auto;
+}
+
+.stats {
+    margin-top: 180px;
+}
+.game-info {
+    margin-top: 180px;
 }

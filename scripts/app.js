@@ -15,6 +15,14 @@ const nextHeight = 4;
 const nextCellCount = nextWidth * nextHeight;
 const nextCells = [];
 
+// Hold piece section
+const holdGrid = document.querySelector("#hold-piece");
+const holdWidth = 4;
+const holdHeight = 4;
+const holdCellCount = nextWidth * nextHeight;
+const holdCells = [];
+
+
 function createGrid(cellCount, cells, gridContainer) {
   for (let i = 0; i < cellCount; i++) {
     const cell = document.createElement("div");
@@ -26,6 +34,7 @@ function createGrid(cellCount, cells, gridContainer) {
 
 createGrid(CurrentPlayCellCount, CurrentPlayCells, CurrentPlayGrid);
 createGrid(nextCellCount, nextCells, nextGrid);
+createGrid(holdCellCount, holdCells, holdGrid);
 
 // Create grids
 // Creating the shapes: I O T S Z J L
