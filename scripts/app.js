@@ -30,22 +30,30 @@ function createGrid(cellCount, cells, gridContainer) {
   }
 }
 
+// create all three grids with cells.
 createGrid(CurrentPlayCellCount, CurrentPlayCells, CurrentPlayGrid);
 createGrid(nextCellCount, nextCells, nextGrid);
 createGrid(holdCellCount, holdCells, holdGrid);
 
 // Creating the shapes: I O T S Z J L
+// Creating shapes 'factory'
 class Shapes {
   constructor(shape) {
     this.shape = shape;
-    this.position = { x: 4, y: 0 };
-    this.currentRotation = 0;
-    this.rotations = rotations;
+    this.position = { x: 4, y: 0 }; // Starting position for each shape.
+    this.currentRotation = 0; // Initial rotation state.
+  }
+
+  getCurrentShape() {
+    return this.shape[this.currentRotation]; // Return the current rotation of the shape
+  }
+
+  rotate() {
+    this.currentRotation = (this.currentRotation + 1) % this.shape.length; // Rotate the shape to the next state
   }
 }
 
-// Creating shapes 'factory'
-
+// Shape definitions:
 const shapes = {
   I: [
     // default
@@ -60,8 +68,10 @@ const shapes = {
   ],
   O: [
     // default
-    [1, 1],
-    [1, 1],
+    [
+      [1, 1],
+      [1, 1],
+    ],
   ],
   T: [
     [
@@ -164,8 +174,10 @@ const shapes = {
   ],
 };
 
+// function to create Tetriminos
 function createTetrimino(type) {
-  return new Shapes(shapes[type]);
+  currentTetrimino = new Shapes(shapes[type]);
+  return currentTetrimino;
 }
 
 // Creating shapes functions
@@ -177,9 +189,10 @@ const z = createTetrimino("Z");
 const j = createTetrimino("J");
 const l = createTetrimino("L");
 
+// Function to add a Tetrimino to the grid
 function addShape(shapeType) {
   const tetrimino = createTetrimino(shapeType);
-  const shape = tetrimino.shape;
+  const shape = tetrimino.getCurrentShape();
   let positionX = 4;
   let positionY = 0;
   let position = positionY * CurrentPlayWidth + positionX;
@@ -196,7 +209,21 @@ function addShape(shapeType) {
   });
 }
 
-addShape("J");
+addShape("O");
+
+function clearCurrentTetrimino() {}
+
+// event listener for rotations
+function handleKeyDown(event) {
+  if (event.keyCode === 38) {
+    console.log("Up arrow was pressed");
+
+    currentTetrimino.rotate();
+    clearCurrentTetrimino();
+    addShape(currentTetrimino.type);
+  }
+}
+document.addEventListener("keydown", handleKeyDown);
 
 // function to draw the shapes randomly
 //
