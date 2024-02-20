@@ -21,6 +21,8 @@ const holdHeight = 4;
 const holdCellCount = nextWidth * nextHeight;
 const holdCells = [];
 
+let shapeCurrentPosition = 4;
+
 function createGrid(cellCount, cells, gridContainer) {
   for (let i = 0; i < cellCount; i++) {
     const cell = document.createElement("div");
@@ -193,9 +195,7 @@ const l = createTetrimino("L");
 function addShape(shapeType) {
   const tetrimino = createTetrimino(shapeType);
   const shape = tetrimino.getCurrentShape();
-  let positionX = 4;
-  let positionY = 0;
-  let position = positionY * CurrentPlayWidth + positionX;
+  let position = shapeCurrentPosition;
 
   shape.forEach((row, rowIndex) => {
     row.forEach((value, colIndex) => {
@@ -209,20 +209,98 @@ function addShape(shapeType) {
   });
 }
 
-addShape("O");
+function removeShape(shapeType) {
+  const tetrimino = createTetrimino(shapeType);
+  const shape = tetrimino.getCurrentShape();
+  let position = shapeCurrentPosition;
 
-function clearCurrentTetrimino() {}
+  shape.forEach((row, rowIndex) => {
+    row.forEach((value, colIndex) => {
+      if (value === 1) {
+        let cellIndex = position + rowIndex * CurrentPlayWidth + colIndex;
+        if (cellIndex < CurrentPlayCells.length) {
+          CurrentPlayCells[cellIndex].classList.remove("tetrimino");
+        }
+      }
+    });
+  });
+}
+
+function checkLeftCollision(shapeType) {
+  const tetrimino = createTetrimino(shapeType);
+  const shape = tetrimino.getCurrentShape();
+  let position = shapeCurrentPosition;
+  let collision = false;
+
+  shape.forEach((row, rowIndex) => {
+    row.forEach((value, colIndex) => {
+      if (value === 1) {
+        let cellIndex = position + rowIndex * CurrentPlayWidth + colIndex;
+        if (cellIndex < CurrentPlayCells.length) {
+          if (cellIndex % CurrentPlayWidth === 0) {
+            collision = true;
+          }
+        }
+      }
+    });
+  });
+  return collision;
+}
+function checkRightCollision(shapeType) {
+  const tetrimino = createTetrimino(shapeType);
+  const shape = tetrimino.getCurrentShape();
+  let position = shapeCurrentPosition;
+  let collision = false;
+
+  shape.forEach((row, rowIndex) => {
+    row.forEach((value, colIndex) => {
+      if (value === 1) {
+        let cellIndex = position + rowIndex * CurrentPlayWidth + colIndex;
+        if (cellIndex < CurrentPlayCells.length) {
+          if (cellIndex % CurrentPlayWidth === CurrentPlayWidth - 1) {
+            collision = true;
+          }
+        }
+      }
+    });
+  });
+  return collision;
+}
+function checkBottomCollision(shapeType) {
+  const tetrimino = createTetrimino(shapeType);
+  const shape = tetrimino.getCurrentShape();
+  let position = shapeCurrentPosition;
+  let collision = false;
+
+  shape.forEach((row, rowIndex) => {
+    row.forEach((value, colIndex) => {
+      if (value === 1) {
+        let cellIndex = position + rowIndex * CurrentPlayWidth + colIndex;
+        if (cellIndex < CurrentPlayCells.length) {
+          if (cellIndex >= CurrentPlayCellCount - CurrentPlayWidth) {
+            collision = true;
+          }
+        }
+      }
+    });
+  });
+  return collision;
+}
 
 // event listener for rotations
 function handleKeyDown(event) {
-  if (event.keyCode === 38) {
-    console.log("Up arrow was pressed");
-
-    currentTetrimino.rotate();
-    clearCurrentTetrimino();
-    addShape(currentTetrimino.type);
+  removeShape("O");
+  if (event.keyCode === 37 && !checkLeftCollision("O")) {
+    shapeCurrentPosition--;
+  } else if (event.keyCode === 39 && !checkRightCollision("O")) {
+    shapeCurrentPosition++;
+  } else if (event.keyCode === 40 && !checkBottomCollision("O")) {
+    shapeCurrentPosition += CurrentPlayWidth;
   }
+  console.log(`Shape current position ${shapeCurrentPosition}`);
+  addShape("O");
 }
+
 document.addEventListener("keydown", handleKeyDown);
 
 // function to draw the shapes randomly
