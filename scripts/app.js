@@ -22,6 +22,8 @@ const holdCellCount = nextWidth * nextHeight;
 const holdCells = [];
 
 let shapeCurrentPosition = 4;
+let gameActive = false;
+let timerId;
 
 function createGrid(cellCount, cells, gridContainer) {
   for (let i = 0; i < cellCount; i++) {
@@ -37,21 +39,16 @@ createGrid(CurrentPlayCellCount, CurrentPlayCells, CurrentPlayGrid);
 createGrid(nextCellCount, nextCells, nextGrid);
 createGrid(holdCellCount, holdCells, holdGrid);
 
-// Creating the shapes: I O T S Z J L
-// Creating shapes 'factory'
+// creating the shapes: I O T S Z J L
+// creating shapes 'factory'
 class Shapes {
   constructor(shape) {
     this.shape = shape;
-    this.position = { x: 4, y: 0 }; // Starting position for each shape.
-    this.currentRotation = 0; // Initial rotation state.
+    this.position = { x: 4, y: 0 };
+    this.currentRotation = 0;
   }
-
   getCurrentShape() {
-    return this.shape[this.currentRotation]; // Return the current rotation of the shape
-  }
-
-  rotate() {
-    this.currentRotation = (this.currentRotation + 1) % this.shape.length; // Rotate the shape to the next state
+    return this.shape[this.currentRotation];
   }
 }
 
@@ -191,6 +188,10 @@ const z = createTetrimino("Z");
 const j = createTetrimino("J");
 const l = createTetrimino("L");
 
+const shapeKeys = Object.keys(shapes);
+let random = Math.floor(Math.random() * shapeKeys.length);
+let randomShapeKey = shapeKeys[random];
+
 // Function to add a Tetrimino to the grid
 function addShape(shapeType) {
   const tetrimino = createTetrimino(shapeType);
@@ -209,6 +210,7 @@ function addShape(shapeType) {
   });
 }
 
+// Function to remove a Tetrimino to the grid
 function removeShape(shapeType) {
   const tetrimino = createTetrimino(shapeType);
   const shape = tetrimino.getCurrentShape();
@@ -226,12 +228,66 @@ function removeShape(shapeType) {
   });
 }
 
+// start game logic
+document.querySelector("#start-button").addEventListener("click", function () {
+  if (!gameActive || timerId === null) {
+    clearGrid();
+    gameActive = true;
+    shapeCurrentPosition = 4;
+    selectRandomShape();
+    if (!timerId) {
+      timerId = setInterval(moveDown, 1000);
+    }
+  }
+});
+
+//reset game logic
+document.querySelector("#reset-button").addEventListener("click", function () {
+  if (gameActive && timerId) {
+    clearInterval(timerId);
+    timerId = null;
+  }
+  clearGrid();
+  gameActive = true;
+  shapeCurrentPosition = 4;
+});
+
+function clearGrid() {
+  CurrentPlayCells.forEach((cell) => {
+    cell.classList.remove("tetrimino");
+  });
+}
+
+// tetrimino moving down logic
+function moveDown() {
+  if (gameActive) {
+    if (!checkBottomCollision(currentTetriminoType)) {
+      removeShape(currentTetriminoType);
+      shapeCurrentPosition += CurrentPlayWidth;
+      addShape(currentTetriminoType);
+    } else {
+      selectRandomShape();
+    }
+  }
+}
+
+let currentTetriminoType;
+
+// random shape logic
+function selectRandomShape() {
+  const shapeKeys = Object.keys(shapes);
+  let random = Math.floor(Math.random() * shapeKeys.length);
+  currentTetriminoType = shapeKeys[random];
+  shapeCurrentPosition = 4;
+  addShape(currentTetriminoType);
+}
+
+// collision logic for grid
 function checkLeftCollision(shapeType) {
   const tetrimino = createTetrimino(shapeType);
   const shape = tetrimino.getCurrentShape();
   let position = shapeCurrentPosition;
   let collision = false;
-
   shape.forEach((row, rowIndex) => {
     row.forEach((value, colIndex) => {
       if (value === 1) {
@@ -246,12 +302,13 @@ function checkLeftCollision(shapeType) {
   });
   return collision;
 }
+
+// collision logic for grid
 function checkRightCollision(shapeType) {
   const tetrimino = createTetrimino(shapeType);
   const shape = tetrimino.getCurrentShape();
   let position = shapeCurrentPosition;
   let collision = false;
-
   shape.forEach((row, rowIndex) => {
     row.forEach((value, colIndex) => {
       if (value === 1) {
@@ -266,12 +323,13 @@ function checkRightCollision(shapeType) {
   });
   return collision;
 }
+
+// collision logic for grid
 function checkBottomCollision(shapeType) {
   const tetrimino = createTetrimino(shapeType);
   const shape = tetrimino.getCurrentShape();
   let position = shapeCurrentPosition;
   let collision = false;
-
   shape.forEach((row, rowIndex) => {
     row.forEach((value, colIndex) => {
       if (value === 1) {
@@ -287,23 +345,28 @@ function checkBottomCollision(shapeType) {
   return collision;
 }
 
-// event listener for rotations
+// event listener for movement
 function handleKeyDown(event) {
-  removeShape("O");
-  if (event.keyCode === 37 && !checkLeftCollision("O")) {
-    shapeCurrentPosition--;
-  } else if (event.keyCode === 39 && !checkRightCollision("O")) {
-    shapeCurrentPosition++;
-  } else if (event.keyCode === 40 && !checkBottomCollision("O")) {
-    shapeCurrentPosition += CurrentPlayWidth;
+  event.preventDefault();
+  removeShape(currentTetriminoType);
+  let newPosition = shapeCurrentPosition;
+  if (event.keyCode === 37) {
+    newPosition -= checkLeftCollision(currentTetriminoType) ? 0 : 1;
+  } else if (event.keyCode === 39) {
+    newPosition += checkRightCollision(currentTetriminoType) ? 0 : 1;
+  } else if (event.keyCode === 40) {
+    newPosition += checkBottomCollision(currentTetriminoType)
+      ? 0
+      : CurrentPlayWidth;
   }
-  console.log(`Shape current position ${shapeCurrentPosition}`);
-  addShape("O");
+  if (newPosition !== shapeCurrentPosition) {
+    shapeCurrentPosition = newPosition;
+  }
+  addShape(currentTetriminoType);
 }
 
 document.addEventListener("keydown", handleKeyDown);
 
-// function to draw the shapes randomly
 //
 // core game mechanics / logic:
 // // start the game
@@ -327,15 +390,15 @@ document.addEventListener("keydown", handleKeyDown);
 
 //////////////// CANVAS - MATRIX THEME /////////////////
 
-// Create canvas
+// create canvas
 const canvas = document.getElementById("tetris-matrix");
 const ctx = canvas.getContext("2d");
 
-// Set height and width of the window.
+// set height and width of the window.
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// Create tetris shapes, font size and column size.
+// create tetris shapes, font size and column size.
 const tetrisShapes = ["I", "O", "T", "S", "Z", "J", "L"];
 const fontSize = 12;
 const columns = canvas.width / fontSize;
