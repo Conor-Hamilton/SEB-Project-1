@@ -87,7 +87,7 @@ main {
 .grid-4x4 div {
   background-color: #333;
   opacity: 0.8;
-  border: 1px solid rgba(0, 255, 0, 0.4);
+  border: 1px solid rgba(0, 255, 0, 0.1);
   height: 25px;
   width: 25px;
 }
@@ -121,7 +121,12 @@ p {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-.grid div.tetrimino {
+.grid div.tetromino {
+  background-color: #0f0;
+  border-color: #0f0;
+  box-shadow: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 30px #0f0;
+}
+.grid div.taken {
   background-color: #0f0;
   border-color: #0f0;
   box-shadow: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 30px #0f0;

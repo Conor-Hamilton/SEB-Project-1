@@ -1,11 +1,9 @@
-// Making a grid for main game, next piece and hold piece (hold piece tbc if im doing this)
-
 // Current play section
-const CurrentPlayGrid = document.querySelector(".grid");
-const CurrentPlayWidth = 10;
-const CurrentPlayHeight = 20;
-const CurrentPlayCellCount = CurrentPlayWidth * CurrentPlayHeight;
-const CurrentPlayCells = [];
+const playGrid = document.querySelector(".grid");
+const width = 10;
+const height = 20;
+const cellCount = width * height;
+const playCells = [];
 
 // Next piece section
 const nextGrid = document.querySelector("#next-piece");
@@ -21,369 +19,197 @@ const holdHeight = 4;
 const holdCellCount = nextWidth * nextHeight;
 const holdCells = [];
 
-let shapeCurrentPosition = 4;
-let gameActive = false;
-let timerId;
-
-function createGrid(cellCount, cells, gridContainer) {
+function createGrid(cellCount, cells, gridContainer, addInvisibleDivs = false) {
   for (let i = 0; i < cellCount; i++) {
     const cell = document.createElement("div");
     cell.dataset.index = i;
     cells.push(cell);
     gridContainer.appendChild(cell);
   }
+  if (addInvisibleDivs) {
+    for (let i = 0; i < 10; i++) {
+      const cell = document.createElement("div");
+      cell.classList.add("taken");
+      cell.style.visibility = "hidden";
+      cells.push(cell);
+      gridContainer.appendChild(cell);
+    }
+  }
 }
 
 // create all three grids with cells.
-createGrid(CurrentPlayCellCount, CurrentPlayCells, CurrentPlayGrid);
+createGrid(cellCount, playCells, playGrid, true);
 createGrid(nextCellCount, nextCells, nextGrid);
 createGrid(holdCellCount, holdCells, holdGrid);
 
-// creating the shapes: I O T S Z J L
-// creating shapes 'factory'
-class Shapes {
-  constructor(shape) {
-    this.shape = shape;
-    this.position = { x: 4, y: 0 };
-    this.currentRotation = 0;
-  }
-  getCurrentShape() {
-    return this.shape[this.currentRotation];
-  }
-}
+const totalScore = document.querySelector("#total-score");
+const highScore = document.querySelector("#highscore");
+const startButton = document.querySelector("#start-button");
+const restartButton = document.querySelector("#restart-button");
+const time = document.querySelector("#time");
+const lineCleared = document.querySelector("#lines");
+const speedLvl = document.querySelector("#speed-level");
+const squares = Array.from(playGrid.querySelectorAll("div"));
+let nextRandom = 0;
+let timerId = 0;
+let score = 0;
 
-// Shape definitions:
-const shapes = {
-  I: [
-    // default
-    [[1, 1, 1, 1]],
-    [
-      // rotation 1
-      [0, 1, 0, 0],
-      [0, 1, 0, 0],
-      [0, 1, 0, 0],
-      [0, 1, 0, 0],
-    ],
-  ],
-  O: [
-    // default
-    [
-      [1, 1],
-      [1, 1],
-    ],
-  ],
-  T: [
-    [
-      // default
-      [0, 1, 0],
-      [1, 1, 1],
-    ],
+// Tetromino arrays - being drawn based on the declared width of grid
+const lTetro = [
+  [1, width + 1, width * 2 + 1, 2],
+  [width, width + 1, width + 2, width * 2 + 2],
+  [1, width + 1, width * 2 + 1, width * 2],
+  [width, width * 2, width * 2 + 1, width * 2 + 2],
+];
 
-    [
-      // rotation 1
-      [0, 1, 0],
-      [0, 1, 1],
-      [0, 1, 0],
-    ],
-    [
-      // rotation 2
-      [1, 1, 1],
-      [0, 1, 0],
-    ],
-    [
-      // rotation 3
-      [0, 1, 0],
-      [1, 1, 0],
-      [0, 1, 0],
-    ],
-  ],
-  S: [
-    [
-      // default
-      [0, 1, 1],
-      [1, 1, 0],
-    ],
-    [
-      // rotation 1
-      [0, 1, 0],
-      [0, 1, 1],
-      [0, 0, 1],
-    ],
-  ],
-  Z: [
-    [
-      // default
-      [1, 1, 0],
-      [0, 1, 1],
-    ],
-    [
-      // rotation 1
-      [0, 1, 0],
-      [1, 1, 0],
-      [1, 0, 0],
-    ],
-  ],
-  J: [
-    [
-      // default
-      [0, 1, 0],
-      [0, 1, 0],
-      [1, 1, 0],
-    ],
-    [
-      // rotation 1
-      [1, 0, 0],
-      [1, 1, 1],
-      [0, 0, 0],
-    ],
-    [
-      // rotation 2
-      [0, 1, 1],
-      [0, 1, 0],
-      [0, 1, 0],
-    ],
-    [
-      // rotation 3
-      [0, 0, 0],
-      [1, 1, 1],
-      [0, 0, 1],
-    ],
-  ],
-  L: [
-    [
-      [0, 1, 0],
-      [0, 1, 0],
-      [0, 1, 1],
-    ],
-    [
-      [0, 0, 0],
-      [1, 1, 1],
-      [1, 0, 0],
-    ],
-    [
-      [1, 1, 0],
-      [0, 1, 0],
-      [0, 1, 0],
-    ],
-    [
-      [0, 0, 1],
-      [1, 1, 1],
-      [0, 0, 0],
-    ],
-  ],
-};
+const zTetro = [
+  [0, width, width + 1, width * 2 + 1],
+  [width + 1, width + 2, width * 2, width * 2 + 1],
+  [0, width, width + 1, width * 2 + 1],
+  [width + 1, width + 2, width * 2, width * 2 + 1],
+];
 
-// function to create Tetriminos
-function createTetrimino(type) {
-  currentTetrimino = new Shapes(shapes[type]);
-  return currentTetrimino;
-}
+const tTetro = [
+  [1, width, width + 1, width + 2],
+  [1, width + 1, width + 2, width * 2 + 1],
+  [width, width + 1, width + 2, width * 2 + 1],
+  [1, width, width + 1, width * 2 + 1],
+];
 
-// Creating shapes functions
-const i = createTetrimino("I");
-const o = createTetrimino("O");
-const t = createTetrimino("T");
-const s = createTetrimino("S");
-const z = createTetrimino("Z");
-const j = createTetrimino("J");
-const l = createTetrimino("L");
+const oTetro = [
+  [0, 1, width, width + 1],
+  [0, 1, width, width + 1],
+  [0, 1, width, width + 1],
+  [0, 1, width, width + 1],
+];
 
-const shapeKeys = Object.keys(shapes);
-let random = Math.floor(Math.random() * shapeKeys.length);
-let randomShapeKey = shapeKeys[random];
+const iTetro = [
+  [1, width + 1, width * 2 + 1, width * 3 + 1],
+  [width, width + 1, width + 2, width + 3],
+  [1, width + 1, width * 2 + 1, width * 3 + 1],
+  [width, width + 1, width + 2, width + 3],
+];
 
-// Function to add a Tetrimino to the grid
-function addShape(shapeType) {
-  const tetrimino = createTetrimino(shapeType);
-  const shape = tetrimino.getCurrentShape();
-  let position = shapeCurrentPosition;
+const tetros = [lTetro, zTetro, tTetro, oTetro, iTetro];
 
-  shape.forEach((row, rowIndex) => {
-    row.forEach((value, colIndex) => {
-      if (value === 1) {
-        let cellIndex = position + rowIndex * CurrentPlayWidth + colIndex;
-        if (cellIndex < CurrentPlayCells.length) {
-          CurrentPlayCells[cellIndex].classList.add("tetrimino");
-        }
-      }
-    });
+let currentPosition = 4;
+let currentRotation = 0;
+let random = Math.floor(Math.random() * tetros.length);
+let current = tetros[random][currentRotation];
+
+function drawTetro() {
+  current.forEach((index) => {
+    squares[currentPosition + index].classList.add("tetromino");
   });
 }
 
-// Function to remove a Tetrimino to the grid
-function removeShape(shapeType) {
-  const tetrimino = createTetrimino(shapeType);
-  const shape = tetrimino.getCurrentShape();
-  let position = shapeCurrentPosition;
-
-  shape.forEach((row, rowIndex) => {
-    row.forEach((value, colIndex) => {
-      if (value === 1) {
-        let cellIndex = position + rowIndex * CurrentPlayWidth + colIndex;
-        if (cellIndex < CurrentPlayCells.length) {
-          CurrentPlayCells[cellIndex].classList.remove("tetrimino");
-        }
-      }
-    });
+function unDraw() {
+  current.forEach((index) => {
+    squares[currentPosition + index].classList.remove("tetromino");
   });
 }
 
 // start game logic
-document.querySelector("#start-button").addEventListener("click", function () {
-  if (!gameActive || timerId === null) {
-    clearGrid();
-    gameActive = true;
-    shapeCurrentPosition = 4;
-    selectRandomShape();
-    if (!timerId) {
-      timerId = setInterval(moveDown, 1000);
-    }
-  }
-});
-
-//reset game logic
-document.querySelector("#reset-button").addEventListener("click", function () {
-  if (gameActive && timerId) {
+startButton.addEventListener("click", function () {
+  if (timerId) {
     clearInterval(timerId);
     timerId = null;
+  } else {
+    drawTetro();
+    timerId = setInterval(moveDown, 1000);
+    nextRandom = Math.floor(Math.random() * tetros.length);
   }
-  clearGrid();
-  gameActive = true;
-  shapeCurrentPosition = 4;
 });
 
-function clearGrid() {
-  CurrentPlayCells.forEach((cell) => {
-    cell.classList.remove("tetrimino");
-  });
+// move down logic and collision
+function moveDown() {
+  unDraw();
+  const isAtBottom = current.some(
+    (index) => currentPosition + index + width >= cellCount
+  );
+  const isOnTaken = current.some((index) =>
+    squares[currentPosition + index + width].classList.contains("taken")
+  );
+  if (!isAtBottom && !isOnTaken) {
+    currentPosition += width;
+  } else {
+    // locks in the current Tetro by adding the 'taken' class to it
+    current.forEach((index) =>
+      squares[currentPosition + index].classList.add("taken")
+    );
+    // generate a new Tetro at the top
+    random = nextRandom;
+    nextRandom = Math.floor(Math.random() * tetros.length);
+    current = tetros[random][currentRotation];
+    currentPosition = 4;
+  }
+  drawTetro();
 }
 
-// tetrimino moving down logic
-function moveDown() {
-  if (gameActive) {
-    if (!checkBottomCollision(currentTetriminoType)) {
-      removeShape(currentTetriminoType);
-      shapeCurrentPosition += CurrentPlayWidth;
-      addShape(currentTetriminoType);
-    } else {
-      selectRandomShape();
+function handleKeyDown(e) {
+  if (timerId) {
+    if (e.keyCode === 37) {
+      moveLeft();
+    } else if (e.keyCode === 39) {
+      moveRight();
+    } else if (e.keyCode === 38) {
+      rotate();
+    } else if (e.keyCode === 40) {
+      moveDown();
     }
   }
 }
 
-let currentTetriminoType;
+function moveLeft() {
 
-// random shape logic
-function selectRandomShape() {
-  const shapeKeys = Object.keys(shapes);
-  let random = Math.floor(Math.random() * shapeKeys.length);
-  currentTetriminoType = shapeKeys[random];
-  shapeCurrentPosition = 4;
-  addShape(currentTetriminoType);
 }
+function moveRight() {
 
-// collision logic for grid
-function checkLeftCollision(shapeType) {
-  const tetrimino = createTetrimino(shapeType);
-  const shape = tetrimino.getCurrentShape();
-  let position = shapeCurrentPosition;
-  let collision = false;
-  shape.forEach((row, rowIndex) => {
-    row.forEach((value, colIndex) => {
-      if (value === 1) {
-        let cellIndex = position + rowIndex * CurrentPlayWidth + colIndex;
-        if (cellIndex < CurrentPlayCells.length) {
-          if (cellIndex % CurrentPlayWidth === 0) {
-            collision = true;
-          }
-        }
-      }
-    });
-  });
-  return collision;
 }
+function rotate() {
 
-// collision logic for grid
-function checkRightCollision(shapeType) {
-  const tetrimino = createTetrimino(shapeType);
-  const shape = tetrimino.getCurrentShape();
-  let position = shapeCurrentPosition;
-  let collision = false;
-  shape.forEach((row, rowIndex) => {
-    row.forEach((value, colIndex) => {
-      if (value === 1) {
-        let cellIndex = position + rowIndex * CurrentPlayWidth + colIndex;
-        if (cellIndex < CurrentPlayCells.length) {
-          if (cellIndex % CurrentPlayWidth === CurrentPlayWidth - 1) {
-            collision = true;
-          }
-        }
-      }
-    });
-  });
-  return collision;
-}
-
-// collision logic for grid
-function checkBottomCollision(shapeType) {
-  const tetrimino = createTetrimino(shapeType);
-  const shape = tetrimino.getCurrentShape();
-  let position = shapeCurrentPosition;
-  let collision = false;
-  shape.forEach((row, rowIndex) => {
-    row.forEach((value, colIndex) => {
-      if (value === 1) {
-        let cellIndex = position + rowIndex * CurrentPlayWidth + colIndex;
-        if (cellIndex < CurrentPlayCells.length) {
-          if (cellIndex >= CurrentPlayCellCount - CurrentPlayWidth) {
-            collision = true;
-          }
-        }
-      }
-    });
-  });
-  return collision;
-}
-
-// event listener for movement
-function handleKeyDown(event) {
-  event.preventDefault();
-  removeShape(currentTetriminoType);
-  let newPosition = shapeCurrentPosition;
-  if (event.keyCode === 37) {
-    newPosition -= checkLeftCollision(currentTetriminoType) ? 0 : 1;
-  } else if (event.keyCode === 39) {
-    newPosition += checkRightCollision(currentTetriminoType) ? 0 : 1;
-  } else if (event.keyCode === 40) {
-    newPosition += checkBottomCollision(currentTetriminoType)
-      ? 0
-      : CurrentPlayWidth;
-  }
-  if (newPosition !== shapeCurrentPosition) {
-    shapeCurrentPosition = newPosition;
-  }
-  addShape(currentTetriminoType);
 }
 
 document.addEventListener("keydown", handleKeyDown);
 
 //
-// core game mechanics / logic:
-// // start the game
-// creates variables such as score, level, lines cleared highscore etc.
-// create functions for moving and rotating the shapes
-// collision detection for the borders + placement
-// function to update the board and clear complete lines
 //
 //
-// game loop:
-// track time - remember setInterval & clearInterval when game is over.
-// update score
-// store / update highscore
 //
 //
-// controls
-// event listeners for keyboard inputs (left, right, rotation, dropping down)
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
