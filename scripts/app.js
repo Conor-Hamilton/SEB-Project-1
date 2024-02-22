@@ -117,8 +117,9 @@ startButton.addEventListener("click", function () {
   } else {
     backgroundThemeTune();
     drawTetro();
-    timerId = setInterval(moveDown, 1000);
     nextRandom = Math.floor(Math.random() * tetros.length);
+    nextShape();
+    timerId = setInterval(moveDown, 1000);
   }
 });
 
@@ -356,6 +357,7 @@ function startNewGame() {
   currentRotation = 0;
   random = Math.floor(Math.random() * tetros.length);
   current = tetros[random][currentRotation];
+  nextShape();
   drawTetro();
   timerId = setInterval(moveDown, 1000);
 }
@@ -422,6 +424,7 @@ function updateHighScore(currentScore) {
     );
   }
   stopBackgroundMusic();
+  gameOverAudio();
   disableControls();
 }
 
