@@ -12,6 +12,7 @@ const nextHeight = 4;
 const nextCellCount = nextWidth * nextHeight;
 const nextCells = [];
 
+// create grids logic
 function createGrid(cellCount, cells, gridContainer, addInvisibleDivs = false) {
   for (let i = 0; i < cellCount; i++) {
     const cell = document.createElement("div");
@@ -35,6 +36,7 @@ function createGrid(cellCount, cells, gridContainer, addInvisibleDivs = false) {
 createGrid(cellCount, playCells, playGrid, true);
 createGrid(nextCellCount, nextCells, nextGrid);
 
+// global declarations
 const totalScore = document.querySelector("#total-score");
 const highScore = document.querySelector("#highscore");
 const startButton = document.querySelector("#start-button");
@@ -87,15 +89,18 @@ const tetros = [lTetro, zTetro, tTetro, oTetro, iTetro];
 
 let currentPosition = 4;
 let currentRotation = 0;
-let random = Math.floor(Math.random() * tetros.length);
-let current = tetros[random][currentRotation];
+let random = Math.floor(Math.random() * tetros.length); // randomise shape logic
+let current = tetros[random][currentRotation]; // grabs the current shape and rotation
+let clearedLines = 0;
 
+// draws shape
 function drawTetro() {
   current.forEach((index) => {
     squares[currentPosition + index].classList.add("tetromino");
   });
 }
 
+// undraws shape
 function unDraw() {
   current.forEach((index) => {
     squares[currentPosition + index].classList.remove("tetromino");
@@ -108,13 +113,14 @@ startButton.addEventListener("click", function () {
     clearInterval(timerId);
     timerId = null;
   } else {
+    backgroundThemeTune();
     drawTetro();
     timerId = setInterval(moveDown, 1000);
     nextRandom = Math.floor(Math.random() * tetros.length);
   }
 });
 
-// move down and collision
+// move down and some collision
 function moveDown() {
   unDraw();
   currentPosition += width;
@@ -142,7 +148,7 @@ function moveDown() {
         squares[currentPosition + index].classList.contains("taken")
       )
     ) {
-      alert("Game Over");
+      updateHighScore(score);
       clearInterval(timerId);
     }
     addScore();
@@ -150,6 +156,7 @@ function moveDown() {
     drawTetro();
   }
 }
+
 // key event listeners
 function handleKeyDown(event) {
   event.preventDefault();
@@ -166,6 +173,7 @@ function handleKeyDown(event) {
   }
 }
 
+// moving left logic
 function moveLeft() {
   unDraw();
   const isAtLeftEdge = current.some(
@@ -182,6 +190,7 @@ function moveLeft() {
   drawTetro();
 }
 
+// move right logic
 function moveRight() {
   unDraw();
   const isAtRightEdge = current.some(
@@ -199,6 +208,7 @@ function moveRight() {
   drawTetro();
 }
 
+// rotation logic
 function rotate() {
   unDraw();
   const originalRotation = currentRotation;
@@ -211,7 +221,8 @@ function rotate() {
   }
   drawTetro();
 }
-// rotation logic
+
+// rotation collision logic
 function isRotationValid() {
   const newPositions = current.map((index) => currentPosition + index);
   const isLeftSideInvalid = newPositions.some(
@@ -241,6 +252,7 @@ function isRotationValid() {
 
 document.addEventListener("keydown", handleKeyDown);
 
+// next grid display
 const nextDisplaySquares = Array.from(nextGrid.querySelectorAll("div"));
 let nextDisplayIndex = 0;
 
@@ -266,6 +278,7 @@ function nextShape() {
 
 // scoring logic
 function addScore() {
+  let lineCleared = false; 
   for (let i = 0; i < 199; i += width) {
     const row = [
       i,
@@ -284,7 +297,11 @@ function addScore() {
         (index) => squares[index] && squares[index].classList.contains("taken")
       )
     ) {
-      score += 10;
+      lineCleared = true;
+      clearedLines += 1;
+      document.getElementById("lines").innerHTML = clearedLines;
+
+      score += 100;
       totalScore.innerHTML = score;
       row.forEach((index) => {
         squares[index].classList.remove("taken");
@@ -295,8 +312,13 @@ function addScore() {
       squares.forEach((cell) => playGrid.appendChild(cell));
     }
   }
+
+  if (lineCleared) {
+    lineAudio();
+  }
 }
 
+// end game logic
 function endGame() {
   if (
     current.some((index) =>
@@ -310,7 +332,10 @@ function endGame() {
   return false;
 }
 
+// starting a new game logic
 function startNewGame() {
+  backgroundThemeTune();
+  enableControls();
   currentPosition = 4;
   currentRotation = 0;
   random = Math.floor(Math.random() * tetros.length);
@@ -319,23 +344,109 @@ function startNewGame() {
   timerId = setInterval(moveDown, 1000);
 }
 
+// reset game logic
 function resetGame() {
   clearInterval(timerId);
   timerId = null;
 
   score = 0;
   totalScore.innerHTML = "0";
-  lineCleared.innerHTML = "0";
-  speedLvl.innerHTML = "1";
+  clearedLines = 0; 
+  document.getElementById("lines").innerHTML = clearedLines; 
 
   squares.forEach((square) => {
     square.classList.remove("tetromino", "taken");
   });
   nextCells.forEach((cell) => cell.classList.remove("tetromino"));
   startNewGame();
+  backgroundThemeTune();
+}
+
+// end game logic
+function endGame() {
+  if (
+    current.some((index) =>
+      squares[currentPosition + index].classList.contains("taken")
+    )
+  ) {
+    totalScore.innerHTML = "Game Over";
+    clearInterval(timerId);
+    clearedLines = 0;
+    document.getElementById("lines").innerHTML = clearedLines;
+    return true;
+  }
+  return false;
 }
 
 document.querySelector("#reset-button").addEventListener("click", resetGame);
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelector(".close").addEventListener("click", function () {
+    document.getElementById("gameEndModal").style.display = "none";
+  });
+  document.getElementById("retryButton").addEventListener("click", function () {
+    document.getElementById("gameEndModal").style.display = "none";
+  });
+});
+
+// updating and storing highscore
+function updateHighScore(currentScore) {
+  const highScoreElement = document.getElementById("highscore");
+  let highScore = parseInt(highScoreElement.innerHTML, 10);
+
+  if (currentScore > highScore) {
+    highScore = currentScore;
+    highScoreElement.innerHTML = highScore.toString();
+    localStorage.setItem("highscore", highScore.toString());
+    showModal(
+      `Congratulations!`,
+      `🌟 You've set a new high score of ${highScore} points!!!! 🌟`
+    );
+  } else {
+    showModal(
+      `Game Over!`,
+      `You scored ${currentScore} points. 🎮 Try again to beat the high score of ${highScore} points! 🎮`
+    );
+  }
+  stopBackgroundMusic();
+  disableControls();
+}
+// shows modal element
+function showModal(title, message) {
+  document.getElementById("modalTitle").innerText = title;
+  document.getElementById("modalMessage").innerText = message;
+  document.getElementById("gameEndModal").style.display = "block";
+}
+
+// disable controls
+function disableControls() {
+  document.removeEventListener("keydown", handleKeyDown);
+}
+
+// enable controls
+function enableControls() {
+  document.addEventListener("keydown", handleKeyDown);
+}
+
+/////////////////////////////////////  AUDIO /////////////////////////////////////
+const backgroundMusic = new Audio("./music/19.mp3");
+const clearLineJingle = new Audio("./music/seb-disappear-101soundboards.mp3");
+
+function backgroundThemeTune() {
+  backgroundMusic.loop = true;
+  backgroundMusic.volume = 0.2;
+  backgroundMusic.play();
+}
+
+function stopBackgroundMusic() {
+  backgroundMusic.pause();
+  backgroundMusic.currentTime = 0;
+}
+
+function lineAudio() {
+  clearLineJingle.volume = 0.4;
+  clearLineJingle.play();
+}
 
 //////////////// CANVAS - MATRIX THEME /////////////////
 

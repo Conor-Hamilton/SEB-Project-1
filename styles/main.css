@@ -139,25 +139,79 @@ p {
 }
 
 #bottom-col {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .button-matrix {
-  font-family: "Matrix", sans-serif;
   background-color: transparent;
-  color: #0f0;
   border: 2px solid #0f0;
-  padding: 10px 20px;
-  font-size: 16px;
+  color: #0f0;
   cursor: pointer;
+  font-family: "Matrix", sans-serif;
+  font-size: 16px;
+  padding: 10px 20px;
   transition: background-color 0.3s, color 0.3s;
 }
 
-.button-matrix:hover, .button-matrix:focus {
+.button-matrix:hover,
+.button-matrix:focus {
   background-color: #0f0;
   color: #000;
 }
 
 .button-matrix:hover {
   animation: glow 1.5s infinite alternate;
+}
+
+.modal {
+  background-color: rgba(0, 0, 0, 0.85);
+  display: none;
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: black;
+  border: 2px solid #0f0;
+  box-shadow: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 40px #0f0;
+  color: #0f0;
+  margin: 10% auto;
+  padding: 20px;
+  position: relative;
+  text-align: center;
+  width: 60%;
+}
+
+.close {
+  color: #0f0;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.modal button {
+  background-color: transparent;
+  border: 2px solid #0f0;
+  color: #0f0;
+  cursor: pointer;
+  font-family: "Matrix", sans-serif;
+  font-size: 16px;
+  padding: 10px 20px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.modal button:hover {
+  background-color: #0f0;
+  color: #000;
 }

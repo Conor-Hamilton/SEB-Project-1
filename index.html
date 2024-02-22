@@ -12,11 +12,19 @@
     <header><h1>TETRIS RELOADED</h1></header>
     <canvas id="tetris-matrix"></canvas>
     <main>
+      <div id="gameEndModal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2 id="modalTitle">Game Over!</h2>
+          <p id="modalMessage">Your score: 0</p>
+          <button id="retryButton">Try Again</button>
+        </div>
+      </div>
+
       <!-- Left Panel -->
       <section class="panel" id="left">
         <div class="buttons-container">
           <div class="left-panel">
-            
             <div class="game-info">
               <div class="info-container">
                 <p>Speed Lvl: <span id="speed-level">1</span></p>
@@ -50,7 +58,6 @@
 
           <div class="stats">
             <div class="info-container">
-              <p>Time: <span id="time">00:00</span></p>
               <p>Highscore: <span id="highscore">0</span></p>
               <p>Total Score: <span id="total-score">0</span></p>
             </div>
