@@ -210,23 +210,38 @@ function moveRight() {
 function rotate() {
   unDraw();
   const originalRotation = currentRotation;
-  currentRotation = (currentRotation + 1) % current.length; // Try the next rotation
+  currentRotation = (currentRotation + 1) % current.length; 
   current = tetros[random][currentRotation];
 
   if (!isRotationValid()) {
-    currentRotation = originalRotation; // Revert to the original rotation if the new one is invalid
+    currentRotation = originalRotation; 
     current = tetros[random][currentRotation];
   }
   drawTetro();
 }
 
 function isRotationValid() {
+  const newPositions = current.map((index) => currentPosition + index);
+  const isLeftSideInvalid = newPositions.some(
+    (position) =>
+      position % width === 0 &&
+      newPositions.some((newPos) => newPos % width === width - 1)
+  );
+  const isRightSideInvalid = newPositions.some(
+    (position) =>
+      position % width === width - 1 &&
+      newPositions.some((newPos) => newPos % width === 0)
+  );
+
+  if (isLeftSideInvalid || isRightSideInvalid) {
+    return false;
+  }
+
   return current.every((index) => {
     const newPosition = currentPosition + index;
     return (
       !squares[newPosition].classList.contains("taken") &&
       newPosition >= 0 &&
-      newPosition % width < width &&
       newPosition < width * height
     );
   });
