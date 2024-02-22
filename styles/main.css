@@ -131,3 +131,42 @@ p {
   border-color: #0f0;
   box-shadow: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 30px #0f0;
 }
+
+#next-piece div.tetromino {
+  background-color: #0f0;
+  border-color: #0f0;
+  box-shadow: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 30px #0f0;
+}
+
+#bottom-col {
+    visibility: hidden;
+}
+
+.button-matrix {
+  font-family: "Matrix", sans-serif;
+  background-color: transparent;
+  color: #0f0; /* The iconic Matrix green */
+  border: 2px solid #0f0;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.button-matrix:hover, .button-matrix:focus {
+  background-color: #0f0;
+  color: #000;
+}
+
+.button-matrix:hover {
+  animation: glow 1.5s infinite alternate;
+}
+
+/* @keyframes glow {
+  from {
+    box-shadow: 0 0 5px #0f0, 0 0 10px #0f0, 0 0 15px #0f0, 0 0 20px #0f0;
+  }
+  to {
+    box-shadow: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 30px #0f0, 0 0 40px #0f0;
+  }
+} */
