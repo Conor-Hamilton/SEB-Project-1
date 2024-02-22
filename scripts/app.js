@@ -92,6 +92,8 @@ let currentRotation = 0;
 let random = Math.floor(Math.random() * tetros.length); // randomise shape logic
 let current = tetros[random][currentRotation]; // grabs the current shape and rotation
 let clearedLines = 0;
+let currentLevel = 0;
+let linesForNextLevel = 10;
 
 // draws shape
 function drawTetro() {
@@ -276,9 +278,9 @@ function nextShape() {
   });
 }
 
-// scoring logic
+// scoring / clearing lines / level up logic
 function addScore() {
-  let lineCleared = false; 
+  let linesClearedThisTurn = 0;
   for (let i = 0; i < 199; i += width) {
     const row = [
       i,
@@ -297,10 +299,7 @@ function addScore() {
         (index) => squares[index] && squares[index].classList.contains("taken")
       )
     ) {
-      lineCleared = true;
-      clearedLines += 1;
-      document.getElementById("lines").innerHTML = clearedLines;
-
+      linesClearedThisTurn += 1;
       score += 100;
       totalScore.innerHTML = score;
       row.forEach((index) => {
@@ -313,9 +312,24 @@ function addScore() {
     }
   }
 
-  if (lineCleared) {
+  if (linesClearedThisTurn > 0) {
+    clearedLines += linesClearedThisTurn;
+    document.getElementById("lines").innerHTML = clearedLines;
     lineAudio();
+
+    if (clearedLines >= linesForNextLevel * (currentLevel + 1)) {
+      currentLevel += 1;
+      document.getElementById("speed-level").innerHTML = currentLevel + 1;
+      updateGameSpeed();
+      levelUpAudio();
+    }
   }
+}
+
+function updateGameSpeed() {
+  clearInterval(timerId);
+  let speed = Math.max(1000 - currentLevel * 100, 200);
+  timerId = setInterval(moveDown, speed);
 }
 
 // end game logic
@@ -327,6 +341,8 @@ function endGame() {
   ) {
     totalScore.innerHTML = "Game Over";
     clearInterval(timerId);
+    stopBackgroundMusic();
+    gameOverAudio();
     return true;
   }
   return false;
@@ -348,18 +364,15 @@ function startNewGame() {
 function resetGame() {
   clearInterval(timerId);
   timerId = null;
-
+  playCells.forEach((cell) => cell.classList.remove("tetromino", "taken"));
+  nextCells.forEach((cell) => cell.classList.remove("tetromino"));
   score = 0;
   totalScore.innerHTML = "0";
-  clearedLines = 0; 
-  document.getElementById("lines").innerHTML = clearedLines; 
-
-  squares.forEach((square) => {
-    square.classList.remove("tetromino", "taken");
-  });
-  nextCells.forEach((cell) => cell.classList.remove("tetromino"));
+  clearedLines = 0;
+  document.getElementById("lines").innerHTML = "0";
+  currentLevel = 0;
+  document.getElementById("speed-level").innerHTML = "1";
   startNewGame();
-  backgroundThemeTune();
 }
 
 // end game logic
@@ -371,8 +384,8 @@ function endGame() {
   ) {
     totalScore.innerHTML = "Game Over";
     clearInterval(timerId);
-    clearedLines = 0;
-    document.getElementById("lines").innerHTML = clearedLines;
+    stopBackgroundMusic();
+    gameOverAudio();
     return true;
   }
   return false;
@@ -411,11 +424,16 @@ function updateHighScore(currentScore) {
   stopBackgroundMusic();
   disableControls();
 }
-// shows modal element
+
 function showModal(title, message) {
   document.getElementById("modalTitle").innerText = title;
   document.getElementById("modalMessage").innerText = message;
   document.getElementById("gameEndModal").style.display = "block";
+
+  if (title === "Game Over!" || message.includes("Game Over")) {
+    stopBackgroundMusic();
+    gameOverAudio();
+  }
 }
 
 // disable controls
@@ -431,6 +449,8 @@ function enableControls() {
 /////////////////////////////////////  AUDIO /////////////////////////////////////
 const backgroundMusic = new Audio("./music/19.mp3");
 const clearLineJingle = new Audio("./music/seb-disappear-101soundboards.mp3");
+const levelUp = new Audio("./music/levelup.mp3");
+const gameoverjingle = new Audio("./music/gameover.mp3");
 
 function backgroundThemeTune() {
   backgroundMusic.loop = true;
@@ -446,6 +466,16 @@ function stopBackgroundMusic() {
 function lineAudio() {
   clearLineJingle.volume = 0.4;
   clearLineJingle.play();
+}
+
+function levelUpAudio() {
+  levelUp.volume = 0.4;
+  levelUp.play();
+}
+
+function gameOverAudio() {
+  gameoverjingle.volume = 0.4;
+  gameoverjingle.play();
 }
 
 //////////////// CANVAS - MATRIX THEME /////////////////
