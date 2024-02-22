@@ -103,7 +103,7 @@ main {
   margin-top: 240px;
 }
 .game-info {
-  margin-top: 250px;
+  margin-top: 235px;
 }
 
 .info-container {
@@ -145,7 +145,7 @@ p {
 .button-matrix {
   font-family: "Matrix", sans-serif;
   background-color: transparent;
-  color: #0f0; /* The iconic Matrix green */
+  color: #0f0;
   border: 2px solid #0f0;
   padding: 10px 20px;
   font-size: 16px;
@@ -161,12 +161,3 @@ p {
 .button-matrix:hover {
   animation: glow 1.5s infinite alternate;
 }
-
-/* @keyframes glow {
-  from {
-    box-shadow: 0 0 5px #0f0, 0 0 10px #0f0, 0 0 15px #0f0, 0 0 20px #0f0;
-  }
-  to {
-    box-shadow: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 30px #0f0, 0 0 40px #0f0;
-  }
-} */

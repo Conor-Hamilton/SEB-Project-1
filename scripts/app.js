@@ -12,13 +12,6 @@ const nextHeight = 4;
 const nextCellCount = nextWidth * nextHeight;
 const nextCells = [];
 
-// Hold piece section
-const holdGrid = document.querySelector("#hold-piece");
-const holdWidth = 4;
-const holdHeight = 4;
-const holdCellCount = nextWidth * nextHeight;
-const holdCells = [];
-
 function createGrid(cellCount, cells, gridContainer, addInvisibleDivs = false) {
   for (let i = 0; i < cellCount; i++) {
     const cell = document.createElement("div");
@@ -41,7 +34,6 @@ function createGrid(cellCount, cells, gridContainer, addInvisibleDivs = false) {
 // create all three grids with cells.
 createGrid(cellCount, playCells, playGrid, true);
 createGrid(nextCellCount, nextCells, nextGrid);
-createGrid(holdCellCount, holdCells, holdGrid);
 
 const totalScore = document.querySelector("#total-score");
 const highScore = document.querySelector("#highscore");
@@ -158,7 +150,7 @@ function moveDown() {
     drawTetro();
   }
 }
-
+// key event listeners
 function handleKeyDown(event) {
   event.preventDefault();
   if (timerId) {
@@ -210,16 +202,16 @@ function moveRight() {
 function rotate() {
   unDraw();
   const originalRotation = currentRotation;
-  currentRotation = (currentRotation + 1) % current.length; 
+  currentRotation = (currentRotation + 1) % current.length;
   current = tetros[random][currentRotation];
 
   if (!isRotationValid()) {
-    currentRotation = originalRotation; 
+    currentRotation = originalRotation;
     current = tetros[random][currentRotation];
   }
   drawTetro();
 }
-
+// rotation logic
 function isRotationValid() {
   const newPositions = current.map((index) => currentPosition + index);
   const isLeftSideInvalid = newPositions.some(
@@ -340,53 +332,10 @@ function resetGame() {
     square.classList.remove("tetromino", "taken");
   });
   nextCells.forEach((cell) => cell.classList.remove("tetromino"));
-  holdCells.forEach((cell) => cell.classList.remove("tetromino"));
   startNewGame();
 }
 
 document.querySelector("#reset-button").addEventListener("click", resetGame);
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 //////////////// CANVAS - MATRIX THEME /////////////////
 
