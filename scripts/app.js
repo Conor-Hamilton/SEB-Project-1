@@ -141,12 +141,13 @@ function moveDown() {
     current.forEach((index) =>
       squares[currentPosition + index].classList.add("taken")
     );
-    random = nextRandom;
+    random = nextRandom; // sets the current tetro type to the next one that had been previously determined.
     nextRandom = Math.floor(Math.random() * tetros.length);
-    current = tetros[random][currentRotation];
+    current = tetros[random][currentRotation]; // updates the current tetro to new type and current rotation
     currentPosition = 4;
 
     if (
+      // if newly placed tetro overlaps with a 'taken' cell it starts the game over logic
       current.some((index) =>
         squares[currentPosition + index].classList.contains("taken")
       )
@@ -219,6 +220,7 @@ function rotate() {
   current = tetros[random][currentRotation];
 
   if (!isRotationValid()) {
+    // checks if the rotation is valid if not then this function resets to originalRotation
     currentRotation = originalRotation;
     current = tetros[random][currentRotation];
   }
@@ -227,7 +229,7 @@ function rotate() {
 
 // rotation collision logic
 function isRotationValid() {
-  const newPositions = current.map((index) => currentPosition + index);
+  const newPositions = current.map((index) => currentPosition + index); // calculates new positions for each block after rotation
   const isLeftSideInvalid = newPositions.some(
     (position) =>
       position % width === 0 &&
@@ -297,6 +299,7 @@ function addScore() {
     ];
     if (
       row.every(
+        // checks if a row is completely filled with tetro squares
         (index) => squares[index] && squares[index].classList.contains("taken")
       )
     ) {
@@ -307,8 +310,8 @@ function addScore() {
         squares[index].classList.remove("taken");
         squares[index].classList.remove("tetromino");
       });
-      const lineRemoved = squares.splice(i, width);
-      squares = lineRemoved.concat(squares);
+      const lineRemoved = squares.splice(i, width); // removes the completed line
+      squares = lineRemoved.concat(squares); // creates a new row
       squares.forEach((cell) => playGrid.appendChild(cell));
     }
   }
@@ -319,6 +322,7 @@ function addScore() {
     lineAudio();
 
     if (clearedLines >= linesForNextLevel * (currentLevel + 1)) {
+      // difficulty increase
       currentLevel += 1;
       document.getElementById("speed-level").innerHTML = currentLevel + 1;
       updateGameSpeed();
