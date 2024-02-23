@@ -216,7 +216,7 @@ p {
   color: #000;
 }
 
-@media (min-width: 768px) {
+@media (max-width: 768px) {
   .grid {
     max-width: 500px;
     height: auto; 
