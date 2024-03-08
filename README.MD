@@ -57,8 +57,8 @@ Final adjustments to styling, implementing sounds and finishing touches.
 
 ## Challenges:
 - The collision logic was a very difficult task, I feel I tackled it in a creative way.
-- I had clipping issues for a while and it took alot of time and resources to get my head around what I needed to do but using KISS I got to break it down and keep things stupid simple(ish).
-- The Matric backdrop
+- I had clipping issues for a while and it took a little while to get my head around what I needed to do but using KISS I got to break it down and kept it stupid simple(ish).
+- The Matrix backdrop
 
 ## Future Enhancements:
 - Given more time I would have liked to add more styling to seperate the game a bit more from the backdrop. I also wanted to add a modal for instructions prior to the game starting as currently there aren't any.
