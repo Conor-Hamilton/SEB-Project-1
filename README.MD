@@ -6,6 +6,9 @@ Tetris Reloaded blends the classic gameplay of Tetris with the iconic Matrix mov
 
 https://conor-hamilton.github.io/SEB-Project-1/
 
+## Screenshot:
+![Tetris Reloaded]( https://i.imgur.com/PSprql6.png )
+
 ## Overview and Concept:
 
 Given one week to develop, I created a grid-based tetris game using JavaScript, HTML and CSS with a Matrix themed visual backdrop. The game becomes progressively more challenging as players navigate higher levels.
